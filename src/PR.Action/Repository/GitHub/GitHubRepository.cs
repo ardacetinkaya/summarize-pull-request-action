@@ -17,7 +17,7 @@ public class GitHubRepository : IRepository
 
     public async Task<string> GetPRDiff(string user, string repository, string pullRequestId)
     {
-        var response = await _client.GetAsync($"https://api.github.com/repos/{user}/{repository}/pulls/{pullRequestId}");
+        var response = await _client.GetAsync($"https://api.github.com/repos/{user}/{repository}/commits/{pullRequestId}");
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadAsStringAsync();

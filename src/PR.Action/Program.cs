@@ -38,6 +38,10 @@ messages.Add(new ChatMessage()
     Just tell me changes in c# files. If there are more than 5 c# files, just do this for 5 files. 
     List them in correct order.
 
+    And do this for just files in given folder.
+
+    <folder>sample-app</folder>
+
     <code>
     {{diff}}
     </code>
