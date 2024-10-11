@@ -25,6 +25,7 @@ var messages = new List<ChatMessage>(){
     """)
 };
 System.Console.WriteLine(settings.PAT);
+System.Console.WriteLine("PAT");
 var repository = new GitHubRepository(settings.PAT);
 var diff = await repository.GetPRDiff("ardacetinkaya", "pull-request-action", settings.PullRequestId);
 System.Console.WriteLine(diff);
