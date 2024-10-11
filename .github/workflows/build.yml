@@ -27,3 +27,7 @@ jobs:
     - name: PR Action
       id: dotnet-pull-request-action
       uses: ardacetinkaya/pull-request-action/@main
+      env:
+        APIKey: ${{ secrets.AI_API_KEY }}
+        ModelId: gpt-4o
+        URI: https://models.inference.ai.azure.com
