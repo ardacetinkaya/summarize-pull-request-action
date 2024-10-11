@@ -10,8 +10,6 @@ on:
       - 'sample-app/**'
   pull_request:
     branches: [ "main" ]
-    paths:
-      - 'sample-app/**'
 
 jobs:
   build:
