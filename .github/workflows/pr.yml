@@ -20,7 +20,7 @@ jobs:
     - uses: actions/checkout@v4
     - name: PR Action
       id: dotnet-pull-request-action
-      uses: ardacetinkaya/pull-request-action/@main
+      uses: ardacetinkaya/pull-request-action/@t01
       env:
         PAT: ${{ secrets.ACTION_TOKEN }}
         APIKey: ${{ secrets.AI_API_KEY }}
