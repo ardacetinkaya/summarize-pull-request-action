@@ -15,9 +15,9 @@ public class GitHubRepository : IRepository
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Trim());
     }
 
-    public async Task<string> GetPRDiff(string user, string repository, string pullRequestId)
+    public async Task<string> GetCommitChanges(string repositoryAccount, string repositoryName, string commitSHA)
     {
-        var response = await _client.GetAsync($"https://api.github.com/repos/{user}/{repository}/commits/{pullRequestId}");
+        var response = await _client.GetAsync($"https://api.github.com/repos/{repositoryAccount}/{repositoryName}/commits/{commitSHA}");
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadAsStringAsync();

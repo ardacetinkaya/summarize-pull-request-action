@@ -26,5 +26,7 @@ jobs:
         APIKey: ${{ secrets.AI_API_KEY }}
         ModelId: gpt-4o
         URI: https://models.inference.ai.azure.com
-        PullRequestId: ${{ github.event.pull_request.head.sha }}
+        RepositoryName: ${{github.event.repository.name}}
+        RepositoryAccount: ${{github.repository_owner}}
+        CommitSHA: ${{ github.event.pull_request.head.sha }}
 

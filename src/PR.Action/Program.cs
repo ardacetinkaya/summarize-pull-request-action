@@ -12,8 +12,6 @@ IConfigurationRoot config = new ConfigurationBuilder()
 Settings settings = config.Get<Settings>()
     ?? throw new Exception("Invalid Configuration");
 
-System.Console.WriteLine($"PR Id:{settings.PullRequestId}");
-
 IChatClient client = new ChatCompletionsClient(
     endpoint: new Uri(settings.URI),
     credential: new AzureKeyCredential(settings.APIKey)
@@ -26,14 +24,18 @@ var messages = new List<ChatMessage>(){
 };
 
 var repository = new GitHubRepository(settings.PAT);
-if(!string.IsNullOrEmpty(settings.PullRequestId)){
-
-var diff = await repository.GetPRDiff("ardacetinkaya", "pull-request-action", settings.PullRequestId);
-
-messages.Add(new ChatMessage()
+if (!string.IsNullOrEmpty(settings.CommitSHA))
 {
-    Role = Microsoft.Extensions.AI.ChatRole.User,
-    Text = $$"""
+
+    var diff = await repository.GetCommitChanges(
+        settings.RepositoryAccount,
+        settings.RepositoryName,
+        settings.CommitSHA);
+
+    messages.Add(new ChatMessage()
+    {
+        Role = Microsoft.Extensions.AI.ChatRole.User,
+        Text = $$"""
     Tell me about the following changes so that when I read the code, it helps me to understand better.
     Just tell me changes in c# files. If there are more than 5 c# files, just do this for 5 files. 
     List them in correct order.
@@ -46,9 +48,9 @@ messages.Add(new ChatMessage()
     {{diff}}
     </code>
     """,
-});
+    });
 
-var result = await client.CompleteAsync(messages);
+    var result = await client.CompleteAsync(messages);
 
-System.Console.WriteLine(result);
+    System.Console.WriteLine(result);
 }

@@ -1,4 +1,4 @@
 public interface IRepository
 {
-    Task<string> GetPRDiff(string user, string repository, string pullRequestId);
+    Task<string> GetCommitChanges(string repositoryAccount, string repositoryName, string commitSHA);
 }
