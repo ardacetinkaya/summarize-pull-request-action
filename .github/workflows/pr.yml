@@ -10,6 +10,8 @@ on:
       - 'sample-app/**'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'sample-app/**'
 
 jobs:
   build:
@@ -26,4 +28,5 @@ jobs:
         APIKey: ${{ secrets.AI_API_KEY }}
         ModelId: gpt-4o
         URI: https://models.inference.ai.azure.com
+        PullRequestId: ${{inputs.pullrequestid}}
 

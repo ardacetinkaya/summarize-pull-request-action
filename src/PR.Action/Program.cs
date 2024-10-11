@@ -12,7 +12,7 @@ IConfigurationRoot config = new ConfigurationBuilder()
 Settings settings = config.Get<Settings>()
     ?? throw new Exception("Invalid Configuration");
 
-System.Console.WriteLine($"PR Id:{settings.INPUT_PULLREQUESTID}");
+System.Console.WriteLine($"PR Id:{settings.PullRequestId}");
 
 IChatClient client = new ChatCompletionsClient(
     endpoint: new Uri(settings.URI),
@@ -26,7 +26,7 @@ var messages = new List<ChatMessage>(){
 };
 
 var repository = new GitHubRepository(settings.PAT);
-var diff = await repository.GetPRDiff("ardacetinkaya", "pull-request-action", settings.INPUT_PULLREQUESTID);
+var diff = await repository.GetPRDiff("ardacetinkaya", "pull-request-action", settings.PullRequestId);
 System.Console.WriteLine(diff);
 messages.Add(new ChatMessage()
 {
