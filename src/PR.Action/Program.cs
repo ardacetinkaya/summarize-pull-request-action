@@ -52,8 +52,6 @@ if (!string.IsNullOrEmpty(settings.CommitSHA))
 
     var result = await client.CompleteAsync(messages);
 
-    System.Console.WriteLine(result);
-
     await repository.PostComment(result.Message.Text,
         settings.RepositoryAccount,
         settings.RepositoryName,
