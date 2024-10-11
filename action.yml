@@ -1,0 +1,15 @@
+name: 'PR Action'
+description: 'A Github action'
+branding:
+  icon: sliders
+  color: purple
+inputs:
+  name:
+    description: 'The repository name.'
+    required: true
+outputs:
+  result:
+    description: 'Some output'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

@@ -26,4 +26,4 @@ jobs:
       run: dotnet build src/PR.Action/PR.Action.csproj --no-restore
     - name: PR Action
       id: dotnet-pull-request-action
-      uses: pull-request-action/src/PR.Action@main
+      uses: ardacetinkaya/pull-request-action/@main
