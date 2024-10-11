@@ -9,8 +9,10 @@ IConfigurationRoot config = new ConfigurationBuilder()
     .AddCommandLine(args)
     .Build();
 
-Settings settings = config.Get<Settings>() 
+Settings settings = config.Get<Settings>()
     ?? throw new Exception("Invalid Configuration");
+
+System.Console.WriteLine(settings.PullRequestId);
 
 IChatClient client = new ChatCompletionsClient(
     endpoint: new Uri(settings.URI),
@@ -23,11 +25,22 @@ var messages = new List<ChatMessage>(){
     """)
 };
 
-messages.Add(new ChatMessage(){
-    Role= Microsoft.Extensions.AI.ChatRole.User,
-    Text = "Tell me about .NET 9"
+var repository = new GitHubRepository("");
+var diff = await repository.GetPRDiff("ardacetinkaya", "pull-request-action", settings.PullRequestId);
+System.Console.WriteLine(diff);
+messages.Add(new ChatMessage()
+{
+    Role = Microsoft.Extensions.AI.ChatRole.User,
+    Text = $$"""
+    Tell me about the following changes so that when I read the code, it help to understand better. 
+    List them in correct order.
+
+    <code>
+    {{diff}}
+    </code>
+    """,
 });
- var result = await client.CompleteAsync(messages);
 
- System.Console.WriteLine(result);
+var result = await client.CompleteAsync(messages);
 
+System.Console.WriteLine(result);

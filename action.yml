@@ -7,6 +7,10 @@ inputs:
   name:
     description: 'The repository name.'
     required: true
+  pullrequestid:
+    description: 'The pull request id'
+    required: false
+    default: ${{github.event.number}}
 outputs:
   result:
     description: 'Some output'
