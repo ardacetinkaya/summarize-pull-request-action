@@ -4,4 +4,5 @@ public sealed class Settings
     public required string ModelId { get; set; }
     public required string URI { get; set; }
     public required string PullRequestId { get; set; }
+    public required string PAT { get; set; }
 }
