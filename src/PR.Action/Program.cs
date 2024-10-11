@@ -12,20 +12,27 @@ IConfigurationRoot config = new ConfigurationBuilder()
 Settings settings = config.Get<Settings>()
     ?? throw new Exception("Invalid Configuration");
 
-IChatClient client = new ChatCompletionsClient(
-    endpoint: new Uri(settings.URI),
-    credential: new AzureKeyCredential(settings.APIKey)
-    ).AsChatClient(settings.ModelId);
-
-var messages = new List<ChatMessage>(){
-    new(Microsoft.Extensions.AI.ChatRole.System, $$"""
-    You are a software developer who know C# very well.
-    """)
-};
-
-var repository = new GitHubRepository(settings.PAT);
 if (!string.IsNullOrEmpty(settings.CommitSHA))
 {
+    IChatClient client = new ChatCompletionsClient(
+        endpoint: new Uri(settings.URI),
+        credential: new AzureKeyCredential(settings.APIKey)
+        ).AsChatClient(settings.ModelId);
+
+    var messages = new List<ChatMessage>(){
+        new(
+            Microsoft.Extensions.AI.ChatRole.System, 
+            $$"""
+            You are a software developer who know C# very well. You describe code changes for commits.
+            Your descriptions are simple and clear so that they help developers to understand changes.
+            Because you are a C# developer, you mainly focused on C# code and project file changes.
+            Because you describe briefly, if there is more than 6 C# related file changes, just describe 6 files.
+            You do descriptions in an order.
+            """
+        )
+    };
+
+    var repository = new GitHubRepository(settings.PAT);
 
     var diff = await repository.GetCommitChanges(
         settings.RepositoryAccount,
@@ -36,18 +43,14 @@ if (!string.IsNullOrEmpty(settings.CommitSHA))
     {
         Role = Microsoft.Extensions.AI.ChatRole.User,
         Text = $$"""
-    Tell me about the following changes so that when I read the code, it helps me to understand better.
-    Just tell me changes in c# files. If there are more than 5 c# files, just do this for 5 files. 
-    List them in correct order.
+        Describe the following commit and do for just files in given folder.
 
-    And do this for just files in given folder.
+        <folder>sample-app</folder>
 
-    <folder>sample-app</folder>
-
-    <code>
-    {{diff}}
-    </code>
-    """,
+        <code>
+        {{diff}}
+        </code>
+        """,
     });
 
     var result = await client.CompleteAsync(messages);

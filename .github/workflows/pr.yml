@@ -4,10 +4,6 @@
 name: PR
 
 on:
-  push:
-    branches: [ "main" ]
-    paths:
-      - 'sample-app/**'
   pull_request:
     branches: [ "main" ]
 
