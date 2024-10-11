@@ -2,10 +2,10 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-public class GitHubRepository : IRepository
+public class GitHubRepository
 {
     private readonly HttpClient _client;
-    
+
     public GitHubRepository(string token)
     {
         _client = new HttpClient();
@@ -24,4 +24,20 @@ public class GitHubRepository : IRepository
 
         return result;
     }
+
+    public async Task PostComment(string comment, string repositoryAccount, string repositoryName, string pullRequestId)
+    {
+
+        var result = await _client.PostAsJsonAsync<Review>($"https://api.github.com/repos/{repositoryAccount}/{repositoryName}/issues/{pullRequestId}/comments", new Review
+        {
+            Body = comment
+        });
+
+        result.EnsureSuccessStatusCode();
+    }
+}
+
+file class Review
+{
+    public string Body { get; set; }
 }

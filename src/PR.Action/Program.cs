@@ -21,12 +21,11 @@ if (!string.IsNullOrEmpty(settings.CommitSHA))
 
     var messages = new List<ChatMessage>(){
         new(
-            Microsoft.Extensions.AI.ChatRole.System, 
+            Microsoft.Extensions.AI.ChatRole.System,
             $$"""
-            You are a software developer who know C# very well. You describe code changes for commits.
+            You are a software developer. You describe code changes for commits.
             Your descriptions are simple and clear so that they help developers to understand changes.
-            Because you are a C# developer, you mainly focused on C# code and project file changes.
-            Because you describe briefly, if there is more than 6 C# related file changes, just describe 6 files.
+            Because you describe briefly, if there is more than 7 file changes, just describe 7 files.
             You do descriptions in an order.
             """
         )
@@ -43,10 +42,7 @@ if (!string.IsNullOrEmpty(settings.CommitSHA))
     {
         Role = Microsoft.Extensions.AI.ChatRole.User,
         Text = $$"""
-        Describe the following commit and do for just files in given folder.
-        And group descriptions per file.
-
-        <folder>sample-app</folder>
+        Describe the following commit and group descriptions per file.
 
         <code>
         {{diff}}
@@ -57,4 +53,9 @@ if (!string.IsNullOrEmpty(settings.CommitSHA))
     var result = await client.CompleteAsync(messages);
 
     System.Console.WriteLine(result);
+
+    await repository.PostComment(result.Message.Text,
+        settings.RepositoryAccount,
+        settings.RepositoryName,
+        settings.PullRequestId);
 }

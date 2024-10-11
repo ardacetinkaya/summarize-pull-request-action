@@ -25,4 +25,5 @@ jobs:
         RepositoryName: ${{github.event.repository.name}}
         RepositoryAccount: ${{github.repository_owner}}
         CommitSHA: ${{ github.event.pull_request.head.sha }}
+        PullRequestId: ${{github.event.number}}
 
