@@ -21,19 +21,21 @@ IChatClient client = new ChatCompletionsClient(
 
 var messages = new List<ChatMessage>(){
     new(Microsoft.Extensions.AI.ChatRole.System, $$"""
-    You are a software developer who knoe C# very well.
+    You are a software developer who know C# very well.
     """)
 };
-System.Console.WriteLine(settings.PAT);
-System.Console.WriteLine("PAT");
+
 var repository = new GitHubRepository(settings.PAT);
+if(!string.IsNullOrEmpty(settings.PullRequestId)){
+
 var diff = await repository.GetPRDiff("ardacetinkaya", "pull-request-action", settings.PullRequestId);
-System.Console.WriteLine(diff);
+
 messages.Add(new ChatMessage()
 {
     Role = Microsoft.Extensions.AI.ChatRole.User,
     Text = $$"""
-    Tell me about the following changes so that when I read the code, it help to understand better. 
+    Tell me about the following changes so that when I read the code, it helps me to understand better.
+    Just tell me changes in c# files. If there are more than 5 c# files, just do this for 5 files. 
     List them in correct order.
 
     <code>
@@ -45,3 +47,4 @@ messages.Add(new ChatMessage()
 var result = await client.CompleteAsync(messages);
 
 System.Console.WriteLine(result);
+}
