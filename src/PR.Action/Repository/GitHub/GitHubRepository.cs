@@ -9,6 +9,7 @@ public class GitHubRepository : IRepository
     public GitHubRepository(string token)
     {
         _client = new HttpClient();
+        _client.DefaultRequestHeaders.Add("User-Agent", "PRAction");
         _client.DefaultRequestHeaders.Add("Accept", "application/vnd.github.diff");
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Trim());
     }
