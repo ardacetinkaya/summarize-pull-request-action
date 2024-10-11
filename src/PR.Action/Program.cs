@@ -44,6 +44,7 @@ if (!string.IsNullOrEmpty(settings.CommitSHA))
         Role = Microsoft.Extensions.AI.ChatRole.User,
         Text = $$"""
         Describe the following commit and do for just files in given folder.
+        And group descriptions per file.
 
         <folder>sample-app</folder>
 
