@@ -2,67 +2,79 @@
 using Azure.AI.Inference;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
-
+using Summarize.PR.Models;
+using Summarize.PR.Repository.GitHub;
 
 IConfigurationRoot config = new ConfigurationBuilder()
-    .AddEnvironmentVariables()
-    .AddCommandLine(args)
-    .Build();
+	.AddEnvironmentVariables()
+	.AddCommandLine(args)
+	.Build();
 
 Settings settings = config.Get<Settings>()
-    ?? throw new Exception("Invalid Configuration");
+	?? throw new Exception("Invalid configuration.");
 
 if (!string.IsNullOrEmpty(settings.CommitSHA))
 {
-    System.Console.WriteLine($"Repository account: {settings.RepositoryAccount}");
-    System.Console.WriteLine($"Repository name: {settings.RepositoryName}");
-    System.Console.WriteLine($"Commit: {settings.CommitSHA}");
-    System.Console.WriteLine($"Model: {settings.ModelId}");
+	Console.WriteLine($"Repository account: {settings.RepositoryAccount}");
+	Console.WriteLine($"Repository name: {settings.RepositoryName}");
+	Console.WriteLine($"Commit: {settings.CommitSHA}");
+	Console.WriteLine($"Model: {settings.ModelId}");
 
-    IChatClient client = new ChatCompletionsClient(
-        endpoint: new Uri("https://models.inference.ai.azure.com"),
-        credential: new AzureKeyCredential(settings.APIKey)
-        ).AsChatClient(settings.ModelId);
+	IChatClient client = new ChatCompletionsClient(
+		endpoint: new("https://models.inference.ai.azure.com"),
+		credential: new AzureKeyCredential(settings.APIKey)
+	).AsChatClient(settings.ModelId);
 
-    var messages = new List<ChatMessage>(){
-        new(
-            Microsoft.Extensions.AI.ChatRole.System,
-            $$"""
-            You are a software developer. You describe code changes for commits.
-            Your descriptions are simple and clear so that they help developers to understand changes.
-            Because you describe briefly, if there is more than 7 file changes, just describe 7 files.
-            You do descriptions in an order.
-            """
-        )
-    };
+	List<ChatMessage> messages = [
+		new(
+			Microsoft.Extensions.AI.ChatRole.System,
+			@"
+				You are a software developer. You describe code changes for commits.
+				Your descriptions are simple and clear so that they help developers to understand changes.
+				Because you describe briefly, if there is more than 7 file changes, just describe 7 files.
+				You do descriptions in an order.
+            "
+		)
+	];
 
-    var repository = new GitHubRepository(settings.PAT);
+	GitHubRepository repository = new(settings.PAT);
 
-    var diff = await repository.GetCommitChanges(
-        settings.RepositoryAccount,
-        settings.RepositoryName,
-        settings.CommitSHA);
+	CommitChanges commitChanges = new()
+	{
+		CommitSHA = settings.CommitSHA,
+		RepositoryName = settings.RepositoryName,
+		RepositoryAccount = settings.RepositoryAccount
+	};
 
-    messages.Add(new ChatMessage()
-    {
-        Role = Microsoft.Extensions.AI.ChatRole.User,
-        Text = $$"""
+	string diff = await repository.GetCommitChangesAsync(commitChanges);
+
+	messages.Add(new()
+	{
+		Role = Microsoft.Extensions.AI.ChatRole.User,
+		Text = $$"""
         Describe the following commit and group descriptions per file.
 
         <code>
         {{diff}}
         </code>
         """,
-    });
+	});
 
-    var result = await client.CompleteAsync(messages);
+	ChatCompletion? result = await client.CompleteAsync(messages);
 
-    await repository.PostComment(result.Message.Text,
-        settings.RepositoryAccount,
-        settings.RepositoryName,
-        settings.PullRequestId);
+	CommitComment commitComment = new()
+	{
+		Comment = result.Message.Text ?? "",
+		PullRequestId = settings.PullRequestId,
+		RepositoryName = settings.RepositoryName,
+		RepositoryAccount = settings.RepositoryAccount,
+	};
 
-    System.Console.WriteLine("Commit changes are summarized");
-}else{
-    System.Console.WriteLine("Commit SHA is not provided, summarization is skipped");
+	await repository.PostCommentAsync(commitComment);
+
+	Console.WriteLine("Commit changes are summarized.");
+}
+else
+{
+	Console.WriteLine("Commit SHA is not provided, summarization is skipped.");
 }
