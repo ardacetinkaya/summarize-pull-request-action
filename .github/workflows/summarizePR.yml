@@ -3,7 +3,8 @@ name: Summarize PR Action
 on:
   pull_request:
     branches: [ "main" ]
-
+    paths: 
+    - 'sample-app/**'
 jobs:
   build:
 
@@ -11,7 +12,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: PR Action
+    - name: Summarize PR action
       id: dotnet-summarize-pull-request-action
       uses: ardacetinkaya/summarize-pull-request-action/@main
       env:

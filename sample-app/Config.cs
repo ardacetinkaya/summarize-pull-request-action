@@ -1,4 +1,4 @@
 class Config
 {
-    public int MyProperty { get; set; }
+    public int Age { get; set; }
 }
