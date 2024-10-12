@@ -1,0 +1,8 @@
+name: 'Summarize PR'
+description: 'A Github action'
+branding:
+  icon: sliders
+  color: purple
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
