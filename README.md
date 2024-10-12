@@ -46,6 +46,12 @@ jobs:
 
 Mainly this is a kind of self-learning and proof-of-concept initiative to learn how LLMs can be used within .NET Platform.
 
+
+## References
+
+- Tutorial: Create a GitHub Action with .NET - https://learn.microsoft.com/en-us/dotnet/devops/create-dotnet-github-action
+- Microsoft.Extensions.AI - https://devblogs.microsoft.com/dotnet/introducing-microsoft-extensions-ai-preview/
+
 ## Contributing
 
 Contributions are more than welcome! Please submit a pull request or create an issue to discuss your ideas or feedbacks.
