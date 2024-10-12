@@ -1,1 +1,1 @@
-# pull-request-action
+# summarize-pull-request-action
