@@ -15,7 +15,7 @@ Settings settings = config.Get<Settings>()
 if (!string.IsNullOrEmpty(settings.CommitSHA))
 {
     IChatClient client = new ChatCompletionsClient(
-        endpoint: new Uri(settings.URI),
+        endpoint: new Uri("https://models.inference.ai.azure.com"),
         credential: new AzureKeyCredential(settings.APIKey)
         ).AsChatClient(settings.ModelId);
 
@@ -56,4 +56,8 @@ if (!string.IsNullOrEmpty(settings.CommitSHA))
         settings.RepositoryAccount,
         settings.RepositoryName,
         settings.PullRequestId);
+
+    System.Console.WriteLine("Commit changes are summarized");
+}else{
+    System.Console.WriteLine("Commit SHA is not provided, summarization is skipped");
 }
