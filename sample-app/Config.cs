@@ -1,4 +1,4 @@
 class Config
 {
-    public int Age { get; set; }
+    public int Year { get; set; }
 }
