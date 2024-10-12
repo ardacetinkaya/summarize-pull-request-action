@@ -6,7 +6,7 @@ A simple GitHub action that can create a brief information about commits in a pu
 
 ## How
 
-With Microsoft.Extensions.AI, action provides access to use LLMs such as GPT-4-0 to describe change sets. Within GitHub Models or Azure AI Model Catalog, models can be used with this action.
+With Microsoft.Extensions.AI, action provides access to use LLMs such as GPT-4o,Llama,Phi-3... to describe change sets. Within GitHub Models or Azure AI Model Catalog, models can be used with this action.
 
 - Azure AI Model Catalog - https://ai.azure.com/explore/models
 - GitHub Models - https://github.com/marketplace/models
