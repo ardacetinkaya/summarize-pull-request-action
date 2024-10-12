@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: PR Action
+    - name: Summarize PR action
       id: dotnet-summarize-pull-request-action
       uses: ardacetinkaya/summarize-pull-request-action/@main
       env:
