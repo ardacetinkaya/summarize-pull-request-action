@@ -13,6 +13,7 @@ public class GitHubRepository
 	public GitHubRepository(string token)
 	{
 		_client = new HttpClient();
+		_client.BaseAddress = new Uri("https://api.github.com/");
 
 		// Set User-Agent and Accept headers.
 		// These headers are necessary for the GitHub API to recognize the request.
