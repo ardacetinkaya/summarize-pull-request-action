@@ -14,6 +14,10 @@ Settings settings = config.Get<Settings>()
 
 if (!string.IsNullOrEmpty(settings.CommitSHA))
 {
+    System.Console.WriteLine($"Repository account: {setting.RepositoryAccount}");
+    System.Console.WriteLine($"Repository name: {setting.RepositoryName}");
+    System.Console.WriteLine($"Commit: {setting.CommitSHA}");
+
     IChatClient client = new ChatCompletionsClient(
         endpoint: new Uri("https://models.inference.ai.azure.com"),
         credential: new AzureKeyCredential(settings.APIKey)
