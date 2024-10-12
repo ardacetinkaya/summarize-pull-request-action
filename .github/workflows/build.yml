@@ -21,15 +21,7 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore src/PR.Action/PR.Action.csproj
+      run: dotnet restore src/Summarize.PR/Summarize.PR.csproj
     - name: Build
-      run: dotnet build src/PR.Action/PR.Action.csproj --no-restore
-    # - name: PR Action
-    #   id: dotnet-pull-request-action
-    #   uses: ardacetinkaya/pull-request-action/@main
-    #   env:
-    #     PAT: ${{ secrets.ACTION_TOKEN }}
-    #     APIKey: ${{ secrets.AI_API_KEY }}
-    #     ModelId: gpt-4o
-    #     URI: https://models.inference.ai.azure.com
+      run: dotnet build src/Summarize.PR/Summarize.PR.csproj --no-restore
 

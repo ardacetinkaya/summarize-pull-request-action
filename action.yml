@@ -1,4 +1,4 @@
-name: 'PR Action'
+name: 'Summarize PR'
 description: 'A Github action'
 branding:
   icon: sliders
