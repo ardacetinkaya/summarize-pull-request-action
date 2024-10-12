@@ -3,7 +3,8 @@ name: Summarize PR Action
 on:
   pull_request:
     branches: [ "main" ]
-
+    paths: 
+    - 'sample-app/**'
 jobs:
   build:
 
