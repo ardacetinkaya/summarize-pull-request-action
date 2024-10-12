@@ -11,6 +11,7 @@ With Microsoft.Extensions.AI, action provides access to use LLMs such as GPT-4-0
 - Azure AI Model Catalog - https://ai.azure.com/explore/models
 - GitHub Models - https://github.com/marketplace/models
 
+Add the following GitHub action definition to your GitHub Action workflows
 ```yaml
 name: Summarize PR
 
