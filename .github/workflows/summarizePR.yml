@@ -21,7 +21,7 @@ jobs:
           exit 0
         fi
     - name: Summarize PR action
-      uses: ardacetinkaya/summarize-pull-request-action/@main
+      uses: ardacetinkaya/summarize-pull-request-action/@ai-comment-revision
       env:
         PAT: ${{ secrets.ACTION_TOKEN }}
         APIKey: ${{ secrets.AI_API_KEY }}

@@ -17,13 +17,10 @@ public record CommitComment
 	public required string RepositoryAccount { get; set; }
 }
 
-public record Settings
+public record Issue
 {
-	public required string PAT { get; set; }
-	public required string APIKey { get; set; }
-	public required string ModelId { get; set; }
-	public required string CommitSHA { get; set; }
-	public required string PullRequestId { get; set; }
+	public required string Title { get; set; }
+	public required string Detail { get; set; }
 	public required string RepositoryName { get; set; }
 	public required string RepositoryAccount { get; set; }
 }

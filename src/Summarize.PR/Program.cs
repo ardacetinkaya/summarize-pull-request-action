@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Summarize.PR.Models;
 using Summarize.PR.Repository;
 using System.Net.Http.Headers;
+using System.Text.Json;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -18,9 +19,8 @@ IConfiguration config = builder.Configuration
 
 builder.Services.Configure<Settings>(config);
 
-builder.Services.AddTransient<IGitHubRepository, GitHubRepository>();
 
-builder.Services.AddHttpClient<GitHubRepository>((sp, client) =>
+builder.Services.AddHttpClient<GitHubRepository>("GitHub", (sp, client) =>
 {
     var settings = sp.GetRequiredService<IOptions<Settings>>().Value;
 
@@ -33,6 +33,7 @@ builder.Services.AddHttpClient<GitHubRepository>((sp, client) =>
     // Authorization header with the Bearer token for authentication.
     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings.PAT.Trim());
 });
+builder.Services.AddTransient<IGitHubRepository, GitHubRepository>();
 
 builder.Services.AddSingleton<IChatClient>(sp =>
 {
@@ -90,15 +91,35 @@ messages.Add(new()
 {
     Role = Microsoft.Extensions.AI.ChatRole.User,
     Text = $$"""
-    Describe the following commit and group descriptions per file.
+    Describe the following commit and group descriptions per file. 
+    If there are some TODO comments in the commit also add them into your response.
+    And also suggest some brief code for the TODO comments. 
+    When suggesting the code also explain it in code description and also underline that it is just a suggestion and pseudo-code
 
     <code>
     {{diff}}
     </code>
+
+    Response the description in this JSON format
+
+    {
+        "Comment": "___DESCRIPTION___",
+        "Todos": [
+            { 
+                "Title":"___TODO_MESSAGE___",
+                "Description": "___SUGGESTED_CODE_DESCRIPTION___",
+                "Code":"___CODE_IN_MARKDOWN___"
+            },
+        ]
+    }
     """,
 });
 
-var result = await client.CompleteAsync(messages);
+var result = await client.CompleteAsync(messages, new ChatOptions
+{
+    ResponseFormat = ChatResponseFormat.Json,
+    Temperature = 0
+});
 
 if (string.IsNullOrEmpty(result.Message.Text))
 {
@@ -107,9 +128,16 @@ if (string.IsNullOrEmpty(result.Message.Text))
     return;
 }
 
+var answer = JsonSerializer.Deserialize<PRDescriptionAnswer>(result.Message.Text);
+if (answer == null)
+{
+    Console.WriteLine("Invalid answer, summarization is skipped.");
+    return;
+}
+
 var commitComment = new CommitComment
 {
-    Comment = result.Message.Text,
+    Comment = answer.Comment,
     PullRequestId = settings.PullRequestId,
     RepositoryName = settings.RepositoryName,
     RepositoryAccount = settings.RepositoryAccount,
@@ -118,3 +146,22 @@ var commitComment = new CommitComment
 await repository.PostCommentAsync(commitComment);
 
 Console.WriteLine("Commit changes are summarized.");
+
+if (answer.Todos != null && answer.Todos.Count != 0)
+{
+    foreach (var todo in answer.Todos)
+    {
+        Console.WriteLine(todo.Title);
+        Console.WriteLine(todo.Code);
+        await repository.AddIssueAsync(new Issue
+        {
+            Title = todo.Title,
+            Detail = @$"This is an auto-generated issue due to [PR#{commitComment.PullRequestId}](https://github.com/{settings.RepositoryAccount}/{settings.RepositoryName}/pull/{commitComment.PullRequestId})
+
+{todo.Code}",
+            RepositoryName = settings.RepositoryName,
+            RepositoryAccount = settings.RepositoryAccount,
+        });
+        Console.WriteLine("There is some TODO(s) in commit, an issue is created to follow it");
+    }
+}

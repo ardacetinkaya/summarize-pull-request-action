@@ -7,4 +7,6 @@ public interface IGitHubRepository
 	Task PostCommentAsync(CommitComment commitComment);
 
 	Task<string> GetCommitChangesAsync(CommitChanges commitChanges);
+	
+	Task AddIssueAsync(Issue issue);
 }
