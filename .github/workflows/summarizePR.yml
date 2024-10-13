@@ -10,6 +10,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Check for API Key and Action Token
+      run: |
+        if [ -z "${{ secrets.AI_API_KEY }}" ]; then
+          echo "API Key is not provided, skipping the action."
+          exit 0
+        fi
+        if [ -z "${{ secrets.ACTION_TOKEN }}" ]; then
+          echo "Action Token is not provided, skipping the action."
+          exit 0
+        fi
     - name: Summarize PR action
       uses: ardacetinkaya/summarize-pull-request-action/@main
       env:
@@ -20,4 +30,3 @@ jobs:
         RepositoryAccount: ${{github.repository_owner}}
         CommitSHA: ${{ github.event.pull_request.head.sha }}
         PullRequestId: ${{github.event.number}}
-
