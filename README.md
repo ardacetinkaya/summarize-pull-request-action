@@ -5,9 +5,13 @@ A simple GitHub action that can create a brief information about commits in a pu
 And also if there are some TODOs comment in the code, an issue is generated automatically to follow-up the TODO and not missed. Within TODO issue, some brief code is also suggested so that for whom will take care of the issue will have some starting point.
 
 
-| PR Description            | Auto-generated issue for TODOs |
-| ------------------------- | ------------------------------ |
-| ![Image](/Example01.png)  | ![alt text](Example02.png)     |
+| PR Description            |
+| ------------------------- |
+| ![Image](/Example01.png)  |
+
+| Auto-generated issue for TODOs |
+| ------------------------------ |
+| ![alt text](Example02.png)     |
 
 
 ## How
