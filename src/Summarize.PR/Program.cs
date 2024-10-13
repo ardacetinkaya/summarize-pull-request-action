@@ -92,8 +92,8 @@ messages.Add(new()
     Role = Microsoft.Extensions.AI.ChatRole.User,
     Text = $$"""
     Describe the following commit and group descriptions per file. 
-    If there are some TODO notes in the commit also add them into your response.
-    And also suggest some brief code for the TODO. 
+    If there are some TODO comments in the commit also add them into your response.
+    And also suggest some brief code for the TODO comments. 
     When suggesting the code also explain it in code description and also underline that it is just a suggestion and pseudo-code
 
     <code>
@@ -156,7 +156,7 @@ if (answer.Todos != null && answer.Todos.Count != 0)
         await repository.AddIssueAsync(new Issue
         {
             Title = todo.Title,
-            Detail = @$"This is an auto-generated issue due to PR #{settings.PullRequestId}
+            Detail = @$"This is an auto-generated issue due to [PR#{commitComment.PullRequestId}](https://github.com/{settings.RepositoryAccount}/{settings.RepositoryName}/pull/{commitComment.PullRequestId})
 
 {todo.Code}",
             RepositoryName = settings.RepositoryName,
