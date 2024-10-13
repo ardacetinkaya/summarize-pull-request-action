@@ -16,3 +16,11 @@ public record CommitComment
 	public required string RepositoryName { get; set; }
 	public required string RepositoryAccount { get; set; }
 }
+
+public record Issue
+{
+	public required string Title { get; set; }
+	public required string Detail { get; set; }
+	public required string RepositoryName { get; set; }
+	public required string RepositoryAccount { get; set; }
+}

@@ -93,7 +93,8 @@ messages.Add(new()
     Text = $$"""
     Describe the following commit and group descriptions per file. 
     If there are some TODO notes in the commit also add them into your response.
-    And also suggest some brief code for the TODO
+    And also suggest some brief code for the TODO. 
+    When suggesting the code also explain it in code description and also underline that it is just a suggestion and pseudo-code
 
     <code>
     {{diff}}
@@ -106,6 +107,7 @@ messages.Add(new()
         "Todos": [
             { 
                 "Title":"___TODO_MESSAGE___",
+                "Description": "___SUGGESTED_CODE_DESCRIPTION___",
                 "Code":"___CODE_IN_MARKDOWN___"
             },
         ]
@@ -116,7 +118,7 @@ messages.Add(new()
 var result = await client.CompleteAsync(messages, new ChatOptions
 {
     ResponseFormat = ChatResponseFormat.Json,
-    Temperature=0
+    Temperature = 0
 });
 
 if (string.IsNullOrEmpty(result.Message.Text))
@@ -147,12 +149,19 @@ Console.WriteLine("Commit changes are summarized.");
 
 if (answer.Todos != null && answer.Todos.Count != 0)
 {
-    Console.WriteLine("There are some TODOs in commit, issues will be created");
     foreach (var todo in answer.Todos)
     {
         Console.WriteLine(todo.Title);
         Console.WriteLine(todo.Code);
-    }
-    //TODO: Create an issue with GitHub API
+        await repository.AddIssueAsync(new Issue
+        {
+            Title = todo.Title,
+            Detail = @$"This is an auto-generated issue due to PR #{settings.PullRequestId}
 
+{todo.Code}",
+            RepositoryName = settings.RepositoryName,
+            RepositoryAccount = settings.RepositoryAccount,
+        });
+        Console.WriteLine("There is some TODO(s) in commit, an issue is created to follow it");
+    }
 }

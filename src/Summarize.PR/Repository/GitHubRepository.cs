@@ -42,4 +42,16 @@ public class GitHubRepository(IHttpClientFactory clientFactory) : IGitHubReposit
 		// Ensure the response is successful.
 		response.EnsureSuccessStatusCode();
 	}
+
+	public async Task AddIssueAsync(Issue issue)
+	{
+		using var response = await _client.PostAsJsonAsync(
+			$"repos/{issue.RepositoryAccount}/{issue.RepositoryName}/issues",
+			new
+			{
+				title = issue.Title,
+				body = issue.Detail
+			}
+		);
+	}
 }
