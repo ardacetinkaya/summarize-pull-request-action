@@ -20,7 +20,7 @@ IConfiguration config = builder.Configuration
 builder.Services.Configure<Settings>(config);
 
 
-builder.Services.AddHttpClient<GitHubRepository>("GitHub",(sp, client) =>
+builder.Services.AddHttpClient<GitHubRepository>("GitHub", (sp, client) =>
 {
     var settings = sp.GetRequiredService<IOptions<Settings>>().Value;
 
@@ -97,11 +97,11 @@ messages.Add(new()
     {{diff}}
     </code>
 
-    Evaluate the description in this JSON format
+    Response the description in this JSON format
 
     {
-        "comment": "___DESCRIPTION___"
-        "todos": [
+        "Comment": "___DESCRIPTION___"
+        "Todos": [
             { "___TODO_MESSAGE___"},
             { "___TODO_MESSAGE___" },
             ...etc
@@ -110,7 +110,10 @@ messages.Add(new()
     """,
 });
 
-var result = await client.CompleteAsync(messages);
+var result = await client.CompleteAsync(messages, new ChatOptions
+{
+    ResponseFormat = ChatResponseFormat.Json
+});
 
 if (string.IsNullOrEmpty(result.Message.Text))
 {
@@ -138,7 +141,7 @@ await repository.PostCommentAsync(commitComment);
 
 Console.WriteLine("Commit changes are summarized.");
 
-if(answer.Todos!=null && answer.Todos.Count != 0)
+if (answer.Todos != null && answer.Todos.Count != 0)
 {
     Console.WriteLine("There are some TODOs in commit, issues will be created");
     foreach (var todo in answer.Todos)
