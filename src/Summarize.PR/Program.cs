@@ -91,7 +91,9 @@ messages.Add(new()
 {
     Role = Microsoft.Extensions.AI.ChatRole.User,
     Text = $$"""
-    Describe the following commit and group descriptions per file. If there are some TODO notes in the commit
+    Describe the following commit and group descriptions per file. 
+    If there are some TODO notes in the commit also add them into your response.
+    And also suggest some brief code for the TODO
 
     <code>
     {{diff}}
@@ -100,11 +102,12 @@ messages.Add(new()
     Response the description in this JSON format
 
     {
-        "Comment": "___DESCRIPTION___"
+        "Comment": "___DESCRIPTION___",
         "Todos": [
-            { "___TODO_MESSAGE___"},
-            { "___TODO_MESSAGE___" },
-            ...etc
+            { 
+                "Title":"___TODO_MESSAGE___",
+                "Code":"___CODE_IN_MARKDOWN___"
+            },
         ]
     }
     """,
@@ -112,7 +115,8 @@ messages.Add(new()
 
 var result = await client.CompleteAsync(messages, new ChatOptions
 {
-    ResponseFormat = ChatResponseFormat.Json
+    ResponseFormat = ChatResponseFormat.Json,
+    Temperature=0
 });
 
 if (string.IsNullOrEmpty(result.Message.Text))
@@ -146,8 +150,9 @@ if (answer.Todos != null && answer.Todos.Count != 0)
     Console.WriteLine("There are some TODOs in commit, issues will be created");
     foreach (var todo in answer.Todos)
     {
-        Console.WriteLine(todo);
+        Console.WriteLine(todo.Title);
+        Console.WriteLine(todo.Code);
     }
-    //TODO: Create GitHub issue with GitHub API
+    //TODO: Create an issue with GitHub API
 
 }

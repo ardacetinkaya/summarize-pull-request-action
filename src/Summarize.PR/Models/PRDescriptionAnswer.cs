@@ -1,8 +1,5 @@
 namespace Summarize.PR.Models;
 
-public record PRDescriptionAnswer
-{
-    public required string Comment { get; set; }
+public record PRDescriptionAnswer(string Comment, IReadOnlyList<Todo> Todos);
 
-    public List<string>? Todos { get; set; }
-}
+public record Todo(string Title, string Code);
