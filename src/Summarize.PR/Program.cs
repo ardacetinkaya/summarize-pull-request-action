@@ -148,6 +148,6 @@ if (answer.Todos != null && answer.Todos.Count != 0)
     {
         Console.WriteLine(todo);
     }
-    //TODO: Create GitHub issue
+    //TODO: Create GitHub issue with GitHub API
 
 }
