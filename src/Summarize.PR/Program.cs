@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Summarize.PR.Models;
 using Summarize.PR.Repository;
 using System.Net.Http.Headers;
+using System.Text.Json;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -90,11 +91,22 @@ messages.Add(new()
 {
     Role = Microsoft.Extensions.AI.ChatRole.User,
     Text = $$"""
-    Describe the following commit and group descriptions per file.
+    Describe the following commit and group descriptions per file. If there are some TODO notes in the commit
 
     <code>
     {{diff}}
     </code>
+
+    Evaluate the description in this JSON format
+
+    {
+        "comment": "___DESCRIPTION___"
+        "todos": [
+            { "___TODO_MESSAGE___"},
+            { "___TODO_MESSAGE___" },
+            ...etc
+        ]
+    }
     """,
 });
 
@@ -107,9 +119,16 @@ if (string.IsNullOrEmpty(result.Message.Text))
     return;
 }
 
+var answer = JsonSerializer.Deserialize<PRDescriptionAnswer>(result.Message.Text);
+if (answer == null)
+{
+    Console.WriteLine("Invalid answer, summarization is skipped.");
+    return;
+}
+
 var commitComment = new CommitComment
 {
-    Comment = result.Message.Text,
+    Comment = answer.Comment,
     PullRequestId = settings.PullRequestId,
     RepositoryName = settings.RepositoryName,
     RepositoryAccount = settings.RepositoryAccount,
@@ -118,3 +137,14 @@ var commitComment = new CommitComment
 await repository.PostCommentAsync(commitComment);
 
 Console.WriteLine("Commit changes are summarized.");
+
+if(answer.Todos!=null && answer.Todos.Count != 0)
+{
+    Console.WriteLine("There are some TODOs in commit, issues will be created");
+    foreach (var todo in answer.Todos)
+    {
+        Console.WriteLine(todo);
+    }
+    //TODO: Create GitHub issue
+
+}
