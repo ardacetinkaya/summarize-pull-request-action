@@ -3,10 +3,9 @@
 using Summarize.PR.Models;
 using System.Net.Http.Json;
 
-public class GitHubRepository(HttpClient client) : IGitHubRepository
+public class GitHubRepository(IHttpClientFactory clientFactory) : IGitHubRepository
 {
-	private readonly HttpClient _client = client;
-
+	private readonly HttpClient _client = clientFactory.CreateClient("GitHub");
 	/// <summary>
 	/// Fetches the commit changes from the GitHub API using the commit SHA.
 	/// </summary>

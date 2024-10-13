@@ -19,9 +19,8 @@ IConfiguration config = builder.Configuration
 
 builder.Services.Configure<Settings>(config);
 
-builder.Services.AddTransient<IGitHubRepository, GitHubRepository>();
 
-builder.Services.AddHttpClient<GitHubRepository>((sp, client) =>
+builder.Services.AddHttpClient<GitHubRepository>("GitHub",(sp, client) =>
 {
     var settings = sp.GetRequiredService<IOptions<Settings>>().Value;
 
@@ -34,6 +33,7 @@ builder.Services.AddHttpClient<GitHubRepository>((sp, client) =>
     // Authorization header with the Bearer token for authentication.
     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings.PAT.Trim());
 });
+builder.Services.AddTransient<IGitHubRepository, GitHubRepository>();
 
 builder.Services.AddSingleton<IChatClient>(sp =>
 {
