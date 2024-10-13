@@ -37,7 +37,7 @@ jobs:
 ```
 
 ### Requirements
-1. Create an GitHub Access Token to be able to use GitHub Apis
+1. Create a GitHub Access Token to be able to use GitHub Apis
    - Read and write to pull request is required
 2. Create required access key for LLM models
 3. Create secrets for the above access assets in the GitHub repo.
